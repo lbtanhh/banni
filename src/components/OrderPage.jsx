@@ -5,14 +5,18 @@ import {
   Button,
   Card,
   Divider,
+  Drawer,
   Group,
   NumberInput,
   Paper,
+  ScrollArea,
   SimpleGrid,
   Stack,
   Text,
   Title,
+  UnstyledButton,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { MENU_CATEGORIES } from "../data/menu";
 import { saveOrder } from "../lib/orders";
 
@@ -30,6 +34,8 @@ export function OrderPage() {
   const [checkoutError, setCheckoutError] = useState(null);
   const [checkoutOk, setCheckoutOk] = useState(false);
   const checkoutInFlight = useRef(false);
+  const [cartDrawerOpened, { open: openCartDrawer, close: closeCartDrawer }] =
+    useDisclosure(false);
 
   const total = useMemo(
     () =>
@@ -98,6 +104,7 @@ export function OrderPage() {
       });
       setCart([]);
       setCheckoutOk(true);
+      closeCartDrawer();
     } catch (e) {
       console.error(e);
       setCheckoutError(
@@ -109,80 +116,192 @@ export function OrderPage() {
     }
   }
 
-  return (
-    <Stack gap="xl">
-      <div>
-        <Title order={2} size="h3">
-          Menu
-        </Title>
-        <Text size="sm" c="dimmed">
-          {
-            "Ch\u1EA1m m\u00F3n \u0111\u1EC3 th\u00EAm \u00B7 ch\u1EC9nh s\u1ED1 l\u01B0\u1EE3ng & gi\u00E1 \u1EDF gi\u1ECF"
-          }
-        </Text>
-      </div>
+  const canPay = cart.length > 0 && total > 0;
 
-      <Stack gap="xl" aria-label={"Th\u1EF1c \u0111\u01A1n"}>
-        {MENU_CATEGORIES.map((cat) => (
-          <section key={cat.id}>
-            <Text fw={800} size="sm" mb="sm" tt="uppercase" c="grape.7">
-              {cat.title}
-            </Text>
-            <SimpleGrid cols={{ base: 2, xs: 3 }} spacing="xs">
-              {cat.items.map((item) => (
-                <Card
-                  key={item.name}
-                  withBorder
-                  padding="sm"
-                  radius="md"
-                  shadow="xs"
-                  style={{ cursor: "pointer" }}
-                  onClick={() => addFromMenu(item)}
-                  sx={(theme) => ({
-                    transition: "transform 120ms ease, box-shadow 120ms ease",
-                    "&:active": { transform: "scale(0.98)" },
-                    "&:hover": {
-                      boxShadow: theme.shadows.sm,
-                      borderColor: theme.colors.grape[3],
-                    },
-                  })}
-                >
-                  <Text fw={600} size="sm" lineClamp={2}>
-                    {item.name}
-                  </Text>
-                  {item.note ? (
-                    <Text size="xs" c="dimmed" lineClamp={2} mt={4}>
-                      {item.note}
+  return (
+    <>
+      <Stack gap="xl" pb={{ base: 150, sm: 140 }}>
+        <div>
+          <Title order={2} size="h3">
+            Menu
+          </Title>
+          <Text size="sm" c="dimmed">
+            {
+              "Ch\u1EA1m m\u00F3n \u0111\u1EC3 th\u00EAm. Gi\u1ECF ghim d\u01B0\u1EDBi \u2014 b\u1EA5m thanh to\u00E1n ngay ho\u1EB7c ch\u1EA1m d\u00F2ng m\u00F3n \u0111\u1EC3 ch\u1EC9nh."
+            }
+          </Text>
+        </div>
+
+        <Stack gap="xl" aria-label={"Th\u1EF1c \u0111\u01A1n"}>
+          {MENU_CATEGORIES.map((cat) => (
+            <section key={cat.id}>
+              <Text fw={800} size="sm" mb="sm" tt="uppercase" c="grape.7">
+                {cat.title}
+              </Text>
+              <SimpleGrid cols={{ base: 2, xs: 3 }} spacing="xs">
+                {cat.items.map((item) => (
+                  <Card
+                    key={item.name}
+                    withBorder
+                    padding="sm"
+                    radius="md"
+                    shadow="xs"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => addFromMenu(item)}
+                    sx={(theme) => ({
+                      transition: "transform 120ms ease, box-shadow 120ms ease",
+                      "&:active": { transform: "scale(0.98)" },
+                      "&:hover": {
+                        boxShadow: theme.shadows.sm,
+                        borderColor: theme.colors.grape[3],
+                      },
+                    })}
+                  >
+                    <Text fw={600} size="sm" lineClamp={2}>
+                      {item.name}
                     </Text>
-                  ) : null}
-                  <Text size="sm" fw={700} c="grape.7" mt={8}>
-                    {formatMoney(item.defaultPrice)}
-                  </Text>
-                </Card>
-              ))}
-            </SimpleGrid>
-          </section>
-        ))}
+                    {item.note ? (
+                      <Text size="xs" c="dimmed" lineClamp={2} mt={4}>
+                        {item.note}
+                      </Text>
+                    ) : null}
+                    <Text size="sm" fw={700} c="grape.7" mt={8}>
+                      {formatMoney(item.defaultPrice)}
+                    </Text>
+                  </Card>
+                ))}
+              </SimpleGrid>
+            </section>
+          ))}
+        </Stack>
       </Stack>
 
       <Paper
-        p="md"
-        radius="lg"
-        withBorder
-        shadow="sm"
-        aria-label="Cart"
+        pos="fixed"
+        bottom={0}
+        left={0}
+        right={0}
+        radius={0}
+        shadow="md"
+        p="sm"
+        style={{ zIndex: 100 }}
+        styles={{
+          root: {
+            paddingBottom: "max(0.65rem, env(safe-area-inset-bottom))",
+            borderTop: "1px solid var(--mantine-color-gray-3)",
+          },
+        }}
       >
-        <Title order={3} size="h4" mb="md">
-          {"Gi\u1ECF h\u00E0ng"}
-        </Title>
-
-        {cart.length === 0 ? (
-          <Text c="dimmed" size="sm">
-            {"Ch\u01B0a c\u00F3 m\u00F3n."}
-          </Text>
+        {canPay ? (
+          <UnstyledButton
+            w="100%"
+            onClick={openCartDrawer}
+            aria-label={"M\u1EDF gi\u1ECF ch\u1EC9nh s\u1EEDa"}
+            mb="xs"
+          >
+            <ScrollArea type="scroll" scrollbars="x" offsetScrollbars>
+              <Group gap="xs" wrap="nowrap" pb={4} style={{ minHeight: 44 }}>
+                {cart.map((line) => {
+                  const lineTotal =
+                    Number(line.price) * Number(line.quantity);
+                  return (
+                    <Paper
+                      key={line.name}
+                      px="sm"
+                      py={6}
+                      radius="md"
+                      withBorder
+                      bg="gray.0"
+                      style={{ flexShrink: 0 }}
+                    >
+                      <Group gap={8} wrap="nowrap">
+                        <Text
+                          size="xs"
+                          fw={600}
+                          lineClamp={1}
+                          maw={140}
+                          style={{ lineHeight: 1.3 }}
+                        >
+                          {line.name}
+                        </Text>
+                        <Text size="xs" c="dimmed" fw={500}>
+                          {"\u00D7"}
+                          {line.quantity}
+                        </Text>
+                        <Text size="xs" fw={700} c="grape.7">
+                          {formatMoney(lineTotal)}
+                        </Text>
+                      </Group>
+                    </Paper>
+                  );
+                })}
+              </Group>
+            </ScrollArea>
+            <Text size="xs" c="dimmed" ta="center" mt={4}>
+              {"Ch\u1EA1m \u0111\u1EC3 s\u1EEDa gi\u00E1 / s\u1ED1 l\u01B0\u1EE3ng"}
+            </Text>
+          </UnstyledButton>
         ) : (
-          <Stack gap="md">
-            {cart.map((line) => (
+          <Text size="sm" c="dimmed" ta="center" py="xs">
+            {"Ch\u01B0a c\u00F3 m\u00F3n trong gi\u1ECF"}
+          </Text>
+        )}
+
+        <Group justify="space-between" align="center" gap="sm" wrap="nowrap">
+          <Stack gap={0} style={{ flex: 1, minWidth: 0 }}>
+            <Text size="xs" c="dimmed" tt="uppercase" fw={600}>
+              {"T\u1ED5ng"}
+            </Text>
+            <Text fw={800} size="lg" lineClamp={1}>
+              {formatMoney(total)}
+            </Text>
+          </Stack>
+          <Button
+            size="md"
+            radius="md"
+            variant="gradient"
+            gradient={{ from: "grape", to: "violet", deg: 120 }}
+            disabled={!canPay || checkoutLoading}
+            loading={checkoutLoading}
+            onClick={(e) => {
+              e.stopPropagation();
+              checkout();
+            }}
+            style={{ flexShrink: 0 }}
+            miw={118}
+          >
+            {checkoutLoading
+              ? "\u2026"
+              : "Thanh to\u00E1n"}
+          </Button>
+        </Group>
+      </Paper>
+
+      <Drawer
+        opened={cartDrawerOpened}
+        onClose={closeCartDrawer}
+        position="bottom"
+        size="88%"
+        radius="lg"
+        title={"Gi\u1ECF h\u00E0ng"}
+        transitionProps={{ transition: "slide-up", duration: 200 }}
+        overlayProps={{ opacity: 0.45 }}
+        styles={{
+          content: {
+            maxHeight: "min(88vh, 640px)",
+          },
+          body: {
+            paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
+          },
+        }}
+      >
+        <Stack gap="md">
+          {cart.length === 0 ? (
+            <Text c="dimmed" size="sm">
+              {"Ch\u01B0a c\u00F3 m\u00F3n."}
+            </Text>
+          ) : (
+            cart.map((line) => (
               <Stack key={line.name} gap="xs">
                 <Group justify="space-between" align="flex-start" wrap="nowrap">
                   <Text fw={600} size="sm" style={{ flex: 1 }}>
@@ -228,45 +347,49 @@ export function OrderPage() {
                 </Text>
                 <Divider />
               </Stack>
-            ))}
-          </Stack>
-        )}
+            ))
+          )}
 
-        <Group justify="space-between" mt="lg" mb="sm">
-          <Text fw={700} size="lg">
-            {"T\u1ED5ng"}
-          </Text>
-          <Text fw={800} size="lg">
-            {formatMoney(total)}
-          </Text>
-        </Group>
+          <Group justify="space-between" mt="xs">
+            <Text fw={700} size="lg">
+              {"T\u1ED5ng"}
+            </Text>
+            <Text fw={800} size="lg">
+              {formatMoney(total)}
+            </Text>
+          </Group>
 
-        {checkoutError && (
-          <Alert color="red" variant="light" mb="sm" title={"Kh\u00F4ng l\u01B0u \u0111\u01B0\u1EE3c"}>
-            {checkoutError}
-          </Alert>
-        )}
-        {checkoutOk && (
-          <Alert color="teal" variant="light" mb="sm">
-            {"\u0110\u00E3 l\u01B0u \u0111\u01A1n."}
-          </Alert>
-        )}
+          {checkoutError && (
+            <Alert
+              color="red"
+              variant="light"
+              title={"Kh\u00F4ng l\u01B0u \u0111\u01B0\u1EE3c"}
+            >
+              {checkoutError}
+            </Alert>
+          )}
+          {checkoutOk && (
+            <Alert color="teal" variant="light">
+              {"\u0110\u00E3 l\u01B0u \u0111\u01A1n."}
+            </Alert>
+          )}
 
-        <Button
-          fullWidth
-          size="lg"
-          radius="md"
-          variant="gradient"
-          gradient={{ from: "grape", to: "violet", deg: 120 }}
-          disabled={cart.length === 0 || checkoutLoading || total <= 0}
-          loading={checkoutLoading}
-          onClick={checkout}
-        >
-          {checkoutLoading
-            ? "\u0110ang l\u01B0u\u2026"
-            : "Thanh to\u00E1n"}
-        </Button>
-      </Paper>
-    </Stack>
+          <Button
+            fullWidth
+            size="lg"
+            radius="md"
+            variant="gradient"
+            gradient={{ from: "grape", to: "violet", deg: 120 }}
+            disabled={!canPay || checkoutLoading}
+            loading={checkoutLoading}
+            onClick={checkout}
+          >
+            {checkoutLoading
+              ? "\u0110ang l\u01B0u\u2026"
+              : "Thanh to\u00E1n"}
+          </Button>
+        </Stack>
+      </Drawer>
+    </>
   );
 }

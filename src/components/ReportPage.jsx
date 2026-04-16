@@ -25,8 +25,6 @@ function normalizeItemKey(name) {
   return (name || "Unknown").trim().toLowerCase();
 }
 
-const COL_NUM = "5.5rem";
-
 export function ReportPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -87,27 +85,33 @@ export function ReportPage() {
 
   return (
     <Stack gap="md">
-      <Group justify="space-between" align="flex-start" wrap="nowrap" gap="sm">
-        <div>
-          <Title order={2} size="h3">
+      <Stack gap={6}>
+        <Group
+          justify="space-between"
+          align="flex-start"
+          wrap="nowrap"
+          gap="sm"
+        >
+          <Title order={2} size="h3" style={{ flex: 1, minWidth: 0 }}>
             {"H\u00F4m nay"}
           </Title>
-          <Text size="sm" c="dimmed" maw={280}>
-            {
-              "Theo ng\u00E0y tr\u00EAn m\u00E1y \u00B7 b\u1EA5m l\u00E0m m\u1EDBi \u0111\u1EC3 t\u1EA3i l\u1EA1i"
-            }
-          </Text>
-        </div>
-        <Button
-          variant="light"
-          size="sm"
-          onClick={load}
-          loading={loading}
-          radius="md"
-        >
-          {"L\u00E0m m\u1EDBi"}
-        </Button>
-      </Group>
+          <Button
+            variant="light"
+            size="sm"
+            onClick={load}
+            loading={loading}
+            radius="md"
+            style={{ flexShrink: 0 }}
+          >
+            {"L\u00E0m m\u1EDBi"}
+          </Button>
+        </Group>
+        <Text size="sm" c="dimmed" style={{ lineHeight: 1.45 }}>
+          {
+            "Theo ng\u00E0y tr\u00EAn m\u00E1y \u00B7 b\u1EA5m l\u00E0m m\u1EDBi \u0111\u1EC3 t\u1EA3i l\u1EA1i"
+          }
+        </Text>
+      </Stack>
 
       {error && (
         <Alert color="red" title={"L\u1ED7i"} variant="light">
@@ -141,12 +145,7 @@ export function ReportPage() {
                   {formatMoney(stats.revenue)}
                 </Text>
               </Paper>
-              <Paper
-                p="md"
-                radius="md"
-                withBorder
-                bg="gray.0"
-              >
+              <Paper p="md" radius="md" withBorder bg="gray.0">
                 <Text size="xs" tt="uppercase" fw={700} c="dimmed" mb={6}>
                   {"\u0110\u00E3 b\u00E1n (SL)"}
                 </Text>
@@ -160,25 +159,39 @@ export function ReportPage() {
               <Text fw={700} size="sm" mb="sm" c="dimmed">
                 {"Chi ti\u1EBFt theo m\u00F3n"}
               </Text>
-              <Table.ScrollContainer minWidth={280}>
+              <Table.ScrollContainer minWidth={320} type="native">
                 <Table
                   striped
                   highlightOnHover
                   verticalSpacing="sm"
-                  horizontalSpacing="md"
+                  horizontalSpacing="sm"
+                  layout="fixed"
+                  style={{ tableLayout: "fixed", width: "100%" }}
                 >
                   <Table.Thead>
                     <Table.Tr>
-                      <Table.Th>{"M\u00F3n"}</Table.Th>
+                      <Table.Th style={{ width: "48%" }}>
+                        {"M\u00F3n"}
+                      </Table.Th>
                       <Table.Th
-                        style={{ textAlign: "right", width: COL_NUM }}
+                        ta="right"
+                        style={{
+                          width: "14%",
+                          whiteSpace: "nowrap",
+                        }}
+                        fz="xs"
                       >
                         SL
                       </Table.Th>
                       <Table.Th
-                        style={{ textAlign: "right", width: COL_NUM }}
+                        ta="right"
+                        style={{
+                          width: "38%",
+                          whiteSpace: "nowrap",
+                        }}
+                        fz="xs"
                       >
-                        {"Th\u00E0nh ti\u1EC1n"}
+                        {"S\u1ED1 ti\u1EC1n"}
                       </Table.Th>
                     </Table.Tr>
                   </Table.Thead>
@@ -196,17 +209,22 @@ export function ReportPage() {
                     ) : (
                       stats.grouped.map((row) => (
                         <Table.Tr key={normalizeItemKey(row.name)}>
-                          <Table.Td>
+                          <Table.Td
+                            style={{
+                              overflow: "hidden",
+                              wordBreak: "break-word",
+                            }}
+                          >
                             <Text fw={500} size="sm">
                               {row.name}
                             </Text>
                           </Table.Td>
-                          <Table.Td style={{ textAlign: "right" }}>
+                          <Table.Td ta="right" style={{ whiteSpace: "nowrap" }}>
                             <Text size="sm" c="dimmed">
                               {row.quantity}
                             </Text>
                           </Table.Td>
-                          <Table.Td style={{ textAlign: "right" }}>
+                          <Table.Td ta="right" style={{ whiteSpace: "nowrap" }}>
                             <Text size="sm" fw={600}>
                               {formatMoney(row.revenue)}
                             </Text>
