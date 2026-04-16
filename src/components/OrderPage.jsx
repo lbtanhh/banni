@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActionIcon,
   Alert,
@@ -7,12 +7,12 @@ import {
   Divider,
   Drawer,
   Group,
-  NumberInput,
   Paper,
   ScrollArea,
   SimpleGrid,
   Stack,
   Text,
+  TextInput,
   Title,
   UnstyledButton,
 } from "@mantine/core";
@@ -26,6 +26,51 @@ function formatMoney(n) {
     currency: "VND",
     maximumFractionDigits: 0,
   }).format(n);
+}
+
+/** Tr\u00E1nh NumberInput (con tr\u1ECF tr\u01B0\u1EDBc s\u1ED1 0 khi x\u00F3a). Ch\u1EC9 s\u1ED1, r\u1ED7ng = 0 trong gi\u1ECF. */
+function CartPriceField({ lineName, price, onCommit }) {
+  const [text, setText] = useState(() =>
+    price === 0 ? "" : String(price)
+  );
+  const focused = useRef(false);
+
+  useEffect(() => {
+    if (!focused.current) {
+      setText(price === 0 ? "" : String(price));
+    }
+  }, [price, lineName]);
+
+  function applyDigits(digits) {
+    const v = digits === "" ? 0 : Number(digits);
+    const next = Number.isNaN(v) ? 0 : Math.max(0, v);
+    onCommit(lineName, next);
+  }
+
+  return (
+    <TextInput
+      label={"Gi\u00E1 (VND)"}
+      size="sm"
+      inputMode="numeric"
+      autoComplete="off"
+      value={text}
+      onFocus={() => {
+        focused.current = true;
+      }}
+      onBlur={() => {
+        focused.current = false;
+        const v = text === "" ? 0 : Number(text);
+        const next = Number.isNaN(v) ? 0 : Math.max(0, v);
+        onCommit(lineName, next);
+        setText(next === 0 ? "" : String(next));
+      }}
+      onChange={(e) => {
+        const digits = e.currentTarget.value.replace(/\D/g, "");
+        setText(digits);
+        applyDigits(digits);
+      }}
+    />
+  );
 }
 
 export function OrderPage() {
@@ -82,8 +127,8 @@ export function OrderPage() {
     );
   }
 
-  function setLinePrice(name, raw) {
-    const v = raw === "" ? 0 : Number(raw);
+  function setLinePrice(name, value) {
+    const v = Number(value);
     if (Number.isNaN(v) || v < 0) return;
     setCart((prev) =>
       prev.map((l) => (l.name === name ? { ...l, price: v } : l))
@@ -331,16 +376,10 @@ export function OrderPage() {
                     </ActionIcon>
                   </Group>
                 </Group>
-                <NumberInput
-                  label={"Gi\u00E1 (VND)"}
-                  size="sm"
-                  min={0}
-                  step={1000}
-                  value={line.price}
-                  onChange={(v) =>
-                    setLinePrice(line.name, v === "" ? "" : String(v))
-                  }
-                  hideControls
+                <CartPriceField
+                  lineName={line.name}
+                  price={line.price}
+                  onCommit={setLinePrice}
                 />
                 <Text size="sm" c="dimmed" ta="right" fw={500}>
                   {formatMoney(Number(line.price) * Number(line.quantity))}
