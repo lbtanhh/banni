@@ -1,0 +1,13 @@
+/* Mantine supplies most global styles; keep only app shell tweaks */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+}
+
+#root {
+  min-height: 100dvh;
+}
