@@ -10,17 +10,17 @@ export const MENU_CATEGORIES = [
     items: [
       {
         name: "Tr\u00E0 s\u1EEFa truy\u1EC1n th\u1ED1ng",
-        defaultPrice: 19_000,
+        defaultPrice: 20_000,
         note: "+1 ph\u1EA7n tc \u0111en/tr\u1EAFng",
       },
       {
         name: "Tr\u00E0 s\u1EEFa Olong l\u00E0i",
-        defaultPrice: 19_000,
+        defaultPrice: 25_000,
         note: "+1 ph\u1EA7n tc \u0111en/tr\u1EAFng",
       },
       {
         name: "Tr\u00E0 s\u1EEFa g\u1EA1o rang",
-        defaultPrice: 19_000,
+        defaultPrice: 25_000,
         note: "+1 ph\u1EA7n tc \u0111en/tr\u1EAFng",
       },
     ],
@@ -31,17 +31,17 @@ export const MENU_CATEGORIES = [
     items: [
       {
         name: "Matcha latte",
-        defaultPrice: 19_000,
+        defaultPrice: 25_000,
         note: "TH Milk, S\u1EEFa G\u1EA5u, S\u1EEFa Oatside",
       },
       {
         name: "Cacao latte",
-        defaultPrice: 19_000,
+        defaultPrice: 25_000,
         note: "TH Milk, S\u1EEFa G\u1EA5u, S\u1EEFa Oatside",
       },
       {
         name: "S\u1EEFa t\u01B0\u01A1i TC \u0111\u01B0\u1EDDng \u0111en",
-        defaultPrice: 19_000,
+        defaultPrice: 25_000,
       },
     ],
   },
@@ -64,32 +64,32 @@ export const MENU_CATEGORIES = [
     items: [
       {
         name: "Tr\u00E0 tr\u00E1i c\u00E2y nhi\u1EC7t \u0111\u1EDBi",
-        defaultPrice: 19_000,
+        defaultPrice: 25_000,
         note: "+1 ph\u1EA7n tc tr\u1EAFng",
       },
       {
         name: "Tr\u00E0 xo\u00E0i chanh d\u00E2y",
-        defaultPrice: 19_000,
+        defaultPrice: 25_000,
         note: "+1 ph\u1EA7n tc tr\u1EAFng",
       },
       {
         name: "Tr\u00E0 m\u0103ng c\u1EA7u",
-        defaultPrice: 19_000,
+        defaultPrice: 25_000,
         note: "+1 ph\u1EA7n tc tr\u1EAFng",
       },
       {
         name: "Tr\u00E0 \u0111\u00E0o mi\u1EBFng/\u0111\u1EADm",
-        defaultPrice: 19_000,
+        defaultPrice: 25_000,
         note: "+1 ph\u1EA7n tc tr\u1EAFng",
       },
       {
         name: "Tr\u00E0 v\u1EA3i",
-        defaultPrice: 19_000,
+        defaultPrice: 25_000,
         note: "+1 ph\u1EA7n tc tr\u1EAFng",
       },
       {
         name: "Tr\u00E0",
-        defaultPrice: 19_000,
+        defaultPrice: 25_000,
         note: "+1 ph\u1EA7n tc tr\u1EAFng",
       },
     ],
@@ -110,22 +110,22 @@ export const MENU_CATEGORIES = [
     items: [
       {
         name: "B\u00E1nh tr\u00E1ng tr\u1ED9n",
-        defaultPrice: 22_000,
+        defaultPrice: 20_000,
         note: "Kho\u1EA3ng 20\u201325k",
       },
       {
         name: "B\u00E1nh tr\u00E1ng cu\u1ED1n",
-        defaultPrice: 22_000,
+        defaultPrice: 20_000,
         note: "Kho\u1EA3ng 20\u201325k",
       },
       {
         name: "M\u00EC tr\u1ED9n topping",
-        defaultPrice: 22_000,
+        defaultPrice: 20_000,
         note: "Kho\u1EA3ng 15\u201330k",
       },
       {
         name: "C\u00E1 vi\u00EAn chi\u00EAn",
-        defaultPrice: 9_000,
+        defaultPrice: 10_000,
         note: "Kho\u1EA3ng 6\u201312k",
       },
     ],
