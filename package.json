@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@mantine/core": "^7.17.8",
+    "@mantine/dates": "^7.17.8",
     "@mantine/hooks": "^7.17.8",
+    "dayjs": "^1.11.20",
     "firebase": "^9.23.0",
     "postcss": "^8.5.10",
     "postcss-preset-mantine": "^1.18.0",

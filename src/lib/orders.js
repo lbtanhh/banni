@@ -34,14 +34,25 @@ function startOfTodayLocal() {
 }
 
 /**
+ * Orders with createdAt in [start, endExclusive).
+ * Both bounds are local calendar instants (Firestore stores UTC).
+ */
+export async function fetchOrdersInRange(start, endExclusive) {
+  const q = query(
+    collection(db, ORDERS),
+    where("createdAt", ">=", Timestamp.fromDate(start)),
+    where("createdAt", "<", Timestamp.fromDate(endExclusive))
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+}
+
+/**
  * Orders with createdAt >= local midnight today.
  */
 export async function fetchTodayOrders() {
   const start = startOfTodayLocal();
-  const q = query(
-    collection(db, ORDERS),
-    where("createdAt", ">=", Timestamp.fromDate(start))
-  );
-  const snap = await getDocs(q);
-  return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  const end = new Date(start);
+  end.setDate(end.getDate() + 1);
+  return fetchOrdersInRange(start, end);
 }
